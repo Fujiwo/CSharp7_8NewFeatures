@@ -1,0 +1,3 @@
+BenchmarkDotNet,OS,CPU,CPU No,CPU Core No,Host,JIT,Job,IterationCount,LaunchCount,WarmupCount
+v0.12.0,Windows 10.0.18363,Intel Core i7-7500U CPU 2.70GHz (Kaby Lake),1, 4 logical and 2 physical cores,".NET Core 3.1.1 (CoreCLR 4.700.19.60701, CoreFX 4.700.19.60801)",X64 RyuJIT,ShortRun,3,1,3
+v0.12.0,Windows 10.0.18363,Intel Core i7-7500U CPU 2.70GHz (Kaby Lake),1, 4 logical and 2 physical cores,.NET Framework 4.8 (4.8.4075.0),X64 RyuJIT,ShortRun,3,1,3

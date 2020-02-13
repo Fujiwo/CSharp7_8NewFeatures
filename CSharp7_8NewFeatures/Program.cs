@@ -1,4 +1,6 @@
 ﻿/*
+参考文献
+
 C# | Wikipedia
 https://ja.wikipedia.org/wiki/C_Sharp
 C# の歴史 - C# ガイド | Microsoft Docs
@@ -13,6 +15,10 @@ C# 7.3 の新機能 - C# によるプログラミング入門 | ++C++; // 未確
 https://ufcpp.net/study/csharp/cheatsheet/ap_ver7_3/
 C# 8.0 の新機能 - C# によるプログラミング入門 | ++C++; // 未確認飛行 C
 https://ufcpp.net/study/csharp/cheatsheet/ap_ver8/
+今日からできる! 簡単 .NET 高速化 Tips | slideshare
+https://www.slideshare.net/xin9le/dotnetperformancetips-170268354
+foreach の掛け方いろいろ | ++C++; // 未確認飛行 C ブログ
+https://ufcpp.net/blog/2018/12/howtoenumerate/
  */
 using System;
 using System.Collections;
@@ -408,7 +414,6 @@ namespace NewFeatures7_1 // C#7.1 - 2017/8 - Visual Studio 2017 Update 3 (15.3)
 namespace NewFeatures7_2 // C#7.2 - 2017/12 - Visual Studio 2017 15.5
 {
     using NewFeatures7;
-    using System.IO;
 
     struct inを使わないVector3D
     {

@@ -673,6 +673,19 @@ namespace NewFeatures8 // C#8 - 2019/9 - Visual Studio 2019 16.3/.NET Core 3.0/.
             _ => 0
         };
 
+        // switch 文
+        static int Compare0(int? x, int? y)
+        {
+            switch ((x, y)) {
+                case (int value1, int value2):
+                    return value1.CompareTo(value2);
+                case ({}        , null      ):
+                case (null      , {}        ):
+                case (null      , null      ):
+                    return 0;
+            }
+        }
+
         // switch 式
         static int Compare(int? x, int? y)
             => (x, y) switch {
@@ -718,7 +731,7 @@ namespace NewFeatures8 // C#8 - 2019/9 - Visual Studio 2019 16.3/.NET Core 3.0/.
             PrepareDataFile(dataFileName);
 
             using var reader = new StreamReader(dataFileName);
-            for (; ; ) {
+            for (; ;) {
                 var text = await reader.ReadLineAsync();
                 if (text == null)
                     break;

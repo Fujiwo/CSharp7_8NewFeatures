@@ -81,18 +81,18 @@ namespace Benchmarks
         [Params(100, 10000)]
         public int Size = 10000;
 
-    interface IValuable
-    {
-        int GetValue();
-    }
+        interface IValuable
+        {
+            int GetValue();
+        }
 
-    struct FooStruct : IValuable
-    {
-        public int Id { get; set; }
-        public int Value { get; set; }
+        struct FooStruct : IValuable
+        {
+            public int Id { get; set; }
+            public int Value { get; set; }
 
-        public int GetValue() => Value;
-    }
+            public int GetValue() => Value;
+        }
 
         [Benchmark]
         public int 非ジェネリック版Collection()

@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BenchMarks.NetFramework", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenchMarks.Core", "BenchMarks.Core\BenchMarks.Core.csproj", "{A0EAA376-5BEE-41F8-BAE9-47FD91DB759D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "structを使うときの注意点", "structを使うときの注意点\structを使うときの注意点.csproj", "{A15A1A1A-87DD-4494-AE84-A04D03B4C50E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "structを使うときの注意点", "structを使うときの注意点\structを使うときの注意点.csproj", "{A15A1A1A-87DD-4494-AE84-A04D03B4C50E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

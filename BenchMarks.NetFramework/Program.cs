@@ -81,18 +81,18 @@ namespace Benchmarks
         [Params(100, 10000)]
         public int Size = 10000;
 
-        interface IValuable
-        {
-            int GetValue();
-        }
+    interface IValuable
+    {
+        int GetValue();
+    }
 
-        struct FooStruct : IValuable
-        {
-            public int Id { get; set; }
-            public int Value { get; set; }
+    struct FooStruct : IValuable
+    {
+        public int Id { get; set; }
+        public int Value { get; set; }
 
-            public int GetValue() => Value;
-        }
+        public int GetValue() => Value;
+    }
 
         [Benchmark]
         public int 非ジェネリック版Collection()
@@ -255,10 +255,16 @@ namespace Benchmarks
             return new string(buffer);
         }
 
-        string バッファをnewしないで文字列を作る(char character)
+        string バッファをnewしないで文字列を作る_キャプチャーされる(char character)
             =>  string.Create(Length, character, (buffer, state) => {
                 for (var index = 0; index < buffer.Length; index++)
                     buffer[index] = (char)(character + index);
+            });
+
+        string バッファをnewしないで文字列を作る_キャプチャーされない(char character)
+            => string.Create(Length, character, (buffer, state) => {
+                for (var index = 0; index < buffer.Length; index++)
+                    buffer[index] = (char)(state + index);
             });
 
         [Benchmark]
@@ -271,11 +277,20 @@ namespace Benchmarks
         }
 
         [Benchmark]
-        public int バッファをnewしないで文字列を作るテスト()
+        public int バッファをnewしないで文字列を作る_キャプチャーされるテスト()
         {
             var sum = 0;
             for (var count = 0; count < 回数; count++)
-                sum += バッファをnewしないで文字列を作る('A').Length;
+                sum += バッファをnewしないで文字列を作る_キャプチャーされる('A').Length;
+            return sum;
+        }
+
+        [Benchmark]
+        public int バッファをnewしないで文字列を作る_キャプチャーされないテスト()
+        {
+            var sum = 0;
+            for (var count = 0; count < 回数; count++)
+                sum += バッファをnewしないで文字列を作る_キャプチャーされない('A').Length;
             return sum;
         }
     }
@@ -293,12 +308,13 @@ namespace Benchmarks
     public class ForAndForEachBenchMarkNetwork
 #endif // Core
     {
+        // Enumerator が値型 (struct) の配列
         public struct StructEnumeratorArray<T>
         {
-            readonly T[] Array;
-            public StructEnumeratorArray(T[] array) => Array = array;
+            readonly T[] array;
+            public StructEnumeratorArray(T[] array) => this.array = array;
 
-            public Enumerator GetEnumerator() => new Enumerator(Array);
+            public Enumerator GetEnumerator() => new Enumerator(array);
 
             public struct Enumerator : IEnumerator<T>
             {
@@ -315,12 +331,13 @@ namespace Benchmarks
             }
         }
 
+        // Enumerator が参照型 (class) の配列
         public struct ClassEnumeratorArray<T> : IEnumerable<T>
         {
-            readonly T[] Array;
-            public ClassEnumeratorArray(T[] array) => Array = array;
+            readonly T[] array;
+            public ClassEnumeratorArray(T[] array) => this.array = array;
 
-            public IEnumerator<T> GetEnumerator() => new Enumerator(Array);
+            public IEnumerator<T> GetEnumerator() => new Enumerator(array);
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
             public class Enumerator : IEnumerator<T>
@@ -350,26 +367,26 @@ namespace Benchmarks
             public int Value { get; set; }
         }
 
-        // ■ StructのArray
+        // ■ structのArray
         FooStruct[]? structArray = null;
 
-        // ■ ClassのArray
+        // ■ classのArray
         FooClass[]? classArray = null;
         IEnumerable<FooClass>? iEnumerableOfClassArray = null;
         IList<FooClass>? iListOfClassArray = null;
         StructEnumeratorArray<FooClass>? structEnumeratorClassArray = null;
         ClassEnumeratorArray<FooClass>? classEnumeratorClassArray = null;
 
-        // ■ ClassのList
+        // ■ classのList
         List<FooClass>? classList = null;
         IEnumerable<FooClass>? iEnumerableOfClassList = null;
         IList<FooClass>? iListOfClassList = null;
 
-        // ■ ClassのLinkedList
+        // ■ classのLinkedList
         LinkedList<FooClass>? classLinkedList = null;
         IEnumerable<FooClass>? iEnumerableOfClassLinkedList = null;
 
-        // ■ ClassのReadOnlyCollection
+        // ■ classのReadOnlyCollection
         ReadOnlyCollection<FooClass>? classReadOnlyCollection = null;
 
         [Params(100, 10000)]
@@ -378,33 +395,33 @@ namespace Benchmarks
         [GlobalSetup]
         public void Setup()
         {
-            // ■ StructのArray
+            // ■ structのArray
             structArray = Enumerable.Range(0, Size).Select(value => new FooStruct { Value = value }).ToArray();
 
-            // ■ ClassのArray
+            // ■ classのArray
             classArray = Enumerable.Range(0, Size).Select(value => new FooClass { Value = value }).ToArray();
             iEnumerableOfClassArray =
             iListOfClassArray = classArray;
             structEnumeratorClassArray = new StructEnumeratorArray<FooClass>(classArray);
             classEnumeratorClassArray = new ClassEnumeratorArray<FooClass>(classArray);
 
-            // ■ ClassのList
+            // ■ classのList
             classList = classArray.ToList();
             iEnumerableOfClassList = iListOfClassList = classList;
 
-            // ■ ClassのLinkedList
+            // ■ classのLinkedList
             classLinkedList = new LinkedList<FooClass>(classArray);
             iEnumerableOfClassLinkedList = classLinkedList;
 
-            // ■ ClassのReadOnlyCollection
+            // ■ classのReadOnlyCollection
             classReadOnlyCollection = new ReadOnlyCollection<FooClass>(classArray);
         }
 
-        // ■ StructのArray
+        // ■ structのArray
         // ○ for
 
         [Benchmark]
-        public int StructのArrayをForする()
+        public int structのArrayをforする()
         {
             var sum = 0;
             for (var index = 0; index < structArray.Length; index++)
@@ -415,7 +432,7 @@ namespace Benchmarks
         // ○ foreach
 
         [Benchmark]
-        public int StructのArrayをForEachする()
+        public int structのArrayをforeachする()
         {
             var sum = 0;
             foreach (var element in structArray)
@@ -423,11 +440,11 @@ namespace Benchmarks
             return sum;
         }
 
-        // ■ ClassのArray
+        // ■ classのArray
         // ○ for
 
         [Benchmark]
-        public int ClassのArrayをForする()
+        public int classのArrayをforする()
         {
             var sum = 0;
             for (var index = 0; index < classArray.Length; index++)
@@ -436,7 +453,7 @@ namespace Benchmarks
         }
 
         [Benchmark]
-        public int ClassのArrayをLengthを変数にしてからForする()
+        public int classのArrayをLengthを変数にしてからforする()
         {
             var sum = 0;
             var count = classArray.Length;
@@ -446,7 +463,7 @@ namespace Benchmarks
         }
 
         [Benchmark]
-        public int ClassのArrayをIListとしてForする()
+        public int classのArrayをIListとしてforする()
         {
             var sum = 0;
             for (var index = 0; index < iListOfClassArray.Count; index++)
@@ -457,7 +474,7 @@ namespace Benchmarks
         // ○ foreach
 
         [Benchmark]
-        public int ClassのArrayをForEachする()
+        public int classのArrayをforeachする()
         {
             var sum = 0;
             foreach (var element in classArray)
@@ -466,7 +483,7 @@ namespace Benchmarks
         }
 
         [Benchmark]
-        public int ClassのArrayをstructのEnumeratorでForEachする()
+        public int classのArrayをstructのEnumeratorでforeachする()
         {
             var sum = 0;
             foreach (var element in structEnumeratorClassArray)
@@ -475,7 +492,7 @@ namespace Benchmarks
         }
 
         [Benchmark]
-        public int ClassのArrayをclassのEnumeratorでForEachする()
+        public int classのArrayをclassのEnumeratorでforeachする()
         {
             var sum = 0;
             foreach (var element in classEnumeratorClassArray)
@@ -484,7 +501,7 @@ namespace Benchmarks
         }
 
         [Benchmark]
-        public int ClassのArrayをIEnumerableとしてForEachする()
+        public int classのArrayをIEnumerableとしてforeachする()
         {
             var sum = 0;
             foreach (var element in iEnumerableOfClassArray)
@@ -495,16 +512,16 @@ namespace Benchmarks
         // ○ Linq
 
         [Benchmark]
-        public int ClassのArrayをIEnumerableとしてLinqのSumする()
+        public int classのArrayをIEnumerableとしてLinqのSumする()
             => iEnumerableOfClassArray.Select(element => element.Value).Sum();
 
         [Benchmark]
-        public int ClassのArrayをIEnumerableとしてLinqのAggregateする()
+        public int classのArrayをIEnumerableとしてLinqのAggregateする()
             => iEnumerableOfClassArray.Select(element => element.Value).Aggregate(0, (sum, next) => sum += next);
 
 #if Core
         [Benchmark]
-        public int ClassのArrayをSpanとしてForEachする()
+        public int classのArrayをSpanとしてforeachする()
         {
             var sum = 0;
             foreach (var element in (Span<FooClass>)classArray)
@@ -513,7 +530,7 @@ namespace Benchmarks
         }
 
         [Benchmark]
-        public int ClassのArrayをReadOnlySpanとしてForEachする()
+        public int classのArrayをReadOnlySpanとしてforeachする()
         {
             var sum = 0;
             foreach (var element in (ReadOnlySpan<FooClass>)classArray)
@@ -522,11 +539,11 @@ namespace Benchmarks
         }
 #endif // Core
 
-        // ■ ClassのList
+        // ■ classのList
         // ○ for
 
         [Benchmark]
-        public int ClassのListをForする()
+        public int classのListをforする()
         {
             var sum = 0;
             for (var index = 0; index < classList.Count; index++)
@@ -535,7 +552,7 @@ namespace Benchmarks
         }
 
         [Benchmark]
-        public int ClassのListをCountを変数にしてからForする()
+        public int classのListをCountを変数にしてからforする()
         {
             var sum = 0;
             var count = classList.Count;
@@ -545,7 +562,7 @@ namespace Benchmarks
         }
 
         [Benchmark]
-        public int ClassのListをIListとしてForする()
+        public int classのListをIListとしてforする()
         {
             var sum = 0;
             for (var index = 0; index < iListOfClassList.Count; index++)
@@ -556,7 +573,7 @@ namespace Benchmarks
         // ○ foreach
 
         [Benchmark]
-        public int ClassのListをForEachする()
+        public int classのListをforeachする()
         {
             var sum = 0;
             foreach (var element in classList)
@@ -565,7 +582,7 @@ namespace Benchmarks
         }
 
         [Benchmark]
-        public int ClassのListをIEnumerableとしてForEachする()
+        public int classのListをIEnumerableとしてforeachする()
         {
             var sum = 0;
             foreach (var element in iEnumerableOfClassList)
@@ -576,18 +593,18 @@ namespace Benchmarks
         // ○ Linq
 
         [Benchmark]
-        public int ClassのListをIEnumerableとしてLinqのSumする()
+        public int classのListをIEnumerableとしてLinqのSumする()
             => iEnumerableOfClassList.Select(element => element.Value).Sum();
 
         [Benchmark]
-        public int ClassのListをIEnumerableとしてLinqのAggregateする()
+        public int classのListをIEnumerableとしてLinqのAggregateする()
             => iEnumerableOfClassList.Select(element => element.Value).Aggregate(0, (sum, next) => sum += next);
 
-        // ■ ClassのLinkedList
+        // ■ classのLinkedList
         // ○ foreach
 
         [Benchmark]
-        public int ClassのLinkedListをForEachする()
+        public int classのLinkedListをforeachする()
         {
             var sum = 0;
             foreach (var element in classLinkedList)
@@ -596,7 +613,7 @@ namespace Benchmarks
         }
 
         [Benchmark]
-        public int ClassのLinkedListをIEnumerableとしてForEachする()
+        public int classのLinkedListをIEnumerableとしてforeachする()
         {
             var sum = 0;
             foreach (var element in iEnumerableOfClassLinkedList)
@@ -607,18 +624,18 @@ namespace Benchmarks
         // ○ Linq
 
         [Benchmark]
-        public int ClassのLinkedListをIEnumerableとしてLinqのSumする()
+        public int classのLinkedListをIEnumerableとしてLinqのSumする()
             => iEnumerableOfClassLinkedList.Select(element => element.Value).Sum();
 
         [Benchmark]
-        public int ClassのLinkedListをIEnumerableとしてLinqのAggregateする()
+        public int classのLinkedListをIEnumerableとしてLinqのAggregateする()
             => iEnumerableOfClassLinkedList.Select(element => element.Value).Aggregate(0, (sum, next) => sum += next);
 
-        // ■ ClassのReadOnlyCollection
+        // ■ classのReadOnlyCollection
         // ○ foreach
 
         [Benchmark]
-        public int ClassのReadOnlyCollectionをForEachする()
+        public int classのReadOnlyCollectionをforeachする()
         {
             var sum = 0;
             foreach (var element in classReadOnlyCollection)
@@ -637,33 +654,33 @@ namespace Benchmarks
             forAndForEachBenchMark.Setup();
 
             var tests = new Func<int>[] {
-                forAndForEachBenchMark.StructのArrayをForする,
-                forAndForEachBenchMark.StructのArrayをForEachする,
-                forAndForEachBenchMark.ClassのArrayをForする,
-                forAndForEachBenchMark.ClassのArrayをLengthを変数にしてからForする,
-                forAndForEachBenchMark.ClassのArrayをIListとしてForする,
-                forAndForEachBenchMark.ClassのArrayをForEachする,
-                forAndForEachBenchMark.ClassのArrayをstructのEnumeratorでForEachする,
-                forAndForEachBenchMark.ClassのArrayをclassのEnumeratorでForEachする,
-                forAndForEachBenchMark.ClassのArrayをIEnumerableとしてForEachする,
-                forAndForEachBenchMark.ClassのArrayをIEnumerableとしてLinqのSumする,
-                forAndForEachBenchMark.ClassのArrayをIEnumerableとしてLinqのAggregateする,
+                forAndForEachBenchMark.structのArrayをforする,
+                forAndForEachBenchMark.structのArrayをforeachする,
+                forAndForEachBenchMark.classのArrayをforする,
+                forAndForEachBenchMark.classのArrayをLengthを変数にしてからforする,
+                forAndForEachBenchMark.classのArrayをIListとしてforする,
+                forAndForEachBenchMark.classのArrayをforeachする,
+                forAndForEachBenchMark.classのArrayをstructのEnumeratorでforeachする,
+                forAndForEachBenchMark.classのArrayをclassのEnumeratorでforeachする,
+                forAndForEachBenchMark.classのArrayをIEnumerableとしてforeachする,
+                forAndForEachBenchMark.classのArrayをIEnumerableとしてLinqのSumする,
+                forAndForEachBenchMark.classのArrayをIEnumerableとしてLinqのAggregateする,
 #if Core
-                forAndForEachBenchMark.ClassのArrayをSpanとしてForEachする,
-                forAndForEachBenchMark.ClassのArrayをReadOnlySpanとしてForEachする,
+                forAndForEachBenchMark.classのArrayをSpanとしてforeachする,
+                forAndForEachBenchMark.classのArrayをReadOnlySpanとしてforeachする,
 #endif // Core
-                forAndForEachBenchMark.ClassのListをForする,
-                forAndForEachBenchMark.ClassのListをCountを変数にしてからForする,
-                forAndForEachBenchMark.ClassのListをIListとしてForする,
-                forAndForEachBenchMark.ClassのListをForEachする,
-                forAndForEachBenchMark.ClassのListをIEnumerableとしてForEachする,
-                forAndForEachBenchMark.ClassのListをIEnumerableとしてLinqのSumする,
-                forAndForEachBenchMark.ClassのListをIEnumerableとしてLinqのAggregateする,
-                forAndForEachBenchMark.ClassのLinkedListをForEachする,
-                forAndForEachBenchMark.ClassのLinkedListをIEnumerableとしてForEachする,
-                forAndForEachBenchMark.ClassのLinkedListをIEnumerableとしてLinqのSumする,
-                forAndForEachBenchMark.ClassのLinkedListをIEnumerableとしてLinqのAggregateする,
-                forAndForEachBenchMark.ClassのReadOnlyCollectionをForEachする
+                forAndForEachBenchMark.classのListをforする,
+                forAndForEachBenchMark.classのListをCountを変数にしてからforする,
+                forAndForEachBenchMark.classのListをIListとしてforする,
+                forAndForEachBenchMark.classのListをforeachする,
+                forAndForEachBenchMark.classのListをIEnumerableとしてforeachする,
+                forAndForEachBenchMark.classのListをIEnumerableとしてLinqのSumする,
+                forAndForEachBenchMark.classのListをIEnumerableとしてLinqのAggregateする,
+                forAndForEachBenchMark.classのLinkedListをforeachする,
+                forAndForEachBenchMark.classのLinkedListをIEnumerableとしてforeachする,
+                forAndForEachBenchMark.classのLinkedListをIEnumerableとしてLinqのSumする,
+                forAndForEachBenchMark.classのLinkedListをIEnumerableとしてLinqのAggregateする,
+                forAndForEachBenchMark.classのReadOnlyCollectionをforeachする
             };
             var sums = tests.Select(test => test()).ToArray();
             var sumGroup = sums.GroupBy(value => value).ToArray();
@@ -671,6 +688,9 @@ namespace Benchmarks
         }
 #endif // DEBUG
     }
+
+
+
 
     [ShortRunJob]
     [HtmlExporter]

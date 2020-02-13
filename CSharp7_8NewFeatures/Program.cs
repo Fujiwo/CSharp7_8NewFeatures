@@ -84,9 +84,19 @@ namespace NewFeatures7 // C# 7 - 2017/3 - Visual Studio 2017
             value = @this.Value;
         }
 
+        static void Sample()
+        {
+            var dividend              = 10;
+            var divisor               =  3;
+            var answer                = (dividend / divisor, dividend % divisor);
+            var (quotient, remainder) = answer;
+        }
+
         public static void Run()
         {
             // Tuple
+            Sample();
+
             var tally     = new[] { 0, 1, 1, 2, 3, 5, 8, 13 }.TallyOld();
             var count     = tally.Item1;
             var sum       = tally.Item2;
@@ -300,7 +310,7 @@ namespace NewFeatures7 // C# 7 - 2017/3 - Visual Studio 2017
         static int ToDecimal(this IEnumerable<int> @this)
         {
             var number = 0;
-            // ローカル関数
+            // ローカル関数 (number をキャプチャー)
             void Add(int digit) => number = number * 10 + digit;
             @this.ForEach(Add);
             return number;
@@ -666,19 +676,19 @@ namespace NewFeatures8 // C#8 - 2019/9 - Visual Studio 2019 16.3/.NET Core 3.0/.
         // switch 式
         static int Compare(int? x, int? y)
             => (x, y) switch {
-                (int number1, int number2) => number1.CompareTo(number2),
-                ({ }, null) => 0,
-                (null, { }) => 0,
+                (int value1, int value2) => value1.CompareTo(value2),
+                ({}  , null) => 0,
+                (null, {}  ) => 0,
                 (null, null) => 0
             };
 
         static bool IsNullOrSpace(string? text)
             => text switch {
-                   null                               => true ,
-                   string {  Length: 0 }              => true , // プロパティ
-                   string s when s.Trim().Length == 0 => true ,
-                   _                                  => false
-               };
+                    null                               => true ,
+                    string {  Length: 0 }              => true , // プロパティ
+                    string s when s.Trim().Length == 0 => true ,
+                    _                                  => false
+                };
 
 
         // インターフェイスのデフォルト実装
@@ -702,6 +712,8 @@ namespace NewFeatures8 // C#8 - 2019/9 - Visual Studio 2019 16.3/.NET Core 3.0/.
         // 非同期ストリーム
         static async IAsyncEnumerable<string> GetData()
         {
+            int n = 0;
+
             const string dataFileName = "data.txt";
             PrepareDataFile(dataFileName);
 
@@ -770,12 +782,13 @@ namespace NewFeatures8 // C#8 - 2019/9 - Visual Studio 2019 16.3/.NET Core 3.0/.
             public void Dispose() {}
         }
 
-        static void N(int a)
+        static void F(int value)
         {
-            int f(int x) => a * x;
+            // ローカル関数
+            int GetMultiple(int multiplier) => value * multiplier;
 
             // 静的ローカル関数
-            static int g(int x) => x * x;
+            static int Square(int x) => x * x;
         }
 
         struct Point2

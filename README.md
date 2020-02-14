@@ -5,6 +5,8 @@ C#7、8の新機能勉強会
 サンプルコード
 2020/02
 
+* [発表資料(pdf)](https://github.com/Fujiwo/CSharp7_8NewFeatures/blob/master/20200214_CSharp78.pdf)
+
 ## 参考文献
 
 * [C# | Wikipedia](https://ja.wikipedia.org/wiki/C_Sharp)

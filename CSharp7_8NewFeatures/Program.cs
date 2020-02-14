@@ -142,10 +142,11 @@ namespace NewFeatures7 // C# 7 - 2017/3 - Visual Studio 2017
             public readonly double x, y;
 
             public Point(double x, double y)
-            {
-                this.x = x;
-                this.y = y;
-            }
+                => (this.x, this.y) = (x, y);
+            //{
+            //    this.x = x;
+            //    this.y = y;
+            //}
 
             public void Deconstruct(out double x, out double y)
             {
@@ -338,7 +339,7 @@ namespace NewFeatures7 // C# 7 - 2017/3 - Visual Studio 2017
     {
         public static async Task Run()
         {
-            TupleSample         .Run();
+            TupleSample          .Run();
             DeconstructSample    .Run();
             TypeSwitchSample     .Run();
             await ValueTaskSample.Run();
@@ -665,12 +666,24 @@ namespace NewFeatures8 // C#8 - 2019/9 - Visual Studio 2019 16.3/.NET Core 3.0/.
 
         // switch 式
         // 再帰パターン
+        static int M0(object item)
+        {
+            switch (item) {
+                case 0: return 1;
+                case int n: return 2;
+                case Point(1, _): return 4;
+                case Point { X: 2, Y: var y }: return y;
+                default: return 0;
+            }
+        }
+
+
         static int M(object item) => item switch {
-            0 => 1,
-            int n => 2,
-            Point(1, _) => 4,
+            0                       => 1,
+            int n                   => 2,
+            Point(1, _)             => 4,
             Point { X: 2, Y: var y } => y,
-            _ => 0
+            _                        => 0
         };
 
         // switch 文

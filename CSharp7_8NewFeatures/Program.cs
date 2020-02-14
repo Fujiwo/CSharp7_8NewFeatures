@@ -804,13 +804,16 @@ namespace NewFeatures8 // C#8 - 2019/9 - Visual Studio 2019 16.3/.NET Core 3.0/.
             static int Square(int x) => x * x;
         }
 
-        struct Point2
+        readonly struct Point2
         {
-            public double X;
-            public double Y;
+            public readonly double X;
+            public readonly double Y;
+
+            public Point2(double x, double y) => (X, Y) = (x, y);
 
             // readonly 関数メンバー
-            public readonly double Absolute() => Math.Sqrt(X * X + Y * Y);
+            public double AbsoluteValue => Math.Sqrt(X * X + Y * Y);
+            public readonly double DotProduct(Point another) => X * another.X + Y * another.Y;
         }
 
         public static async Task Run()

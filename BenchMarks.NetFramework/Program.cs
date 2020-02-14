@@ -318,8 +318,8 @@ namespace Benchmarks
 
             public struct Enumerator : IEnumerator<T>
             {
-                private readonly T[] array;
-                private int index;
+                readonly T[] array;
+                int          index;
 
                 internal Enumerator(T[] array) => (this.array, index) = (array, -1);
 
@@ -342,8 +342,8 @@ namespace Benchmarks
 
             public class Enumerator : IEnumerator<T>
             {
-                private readonly T[] array;
-                private int index;
+                readonly T[] array;
+                int          index;
 
                 internal Enumerator(T[] array) => (this.array, index) = (array, -1);
 
